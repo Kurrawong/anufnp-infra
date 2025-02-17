@@ -1,0 +1,26 @@
+# https://Taskfile.dev
+
+version: 3
+
+tasks:
+  build:prez-ui:
+    desc: Build prez-ui static files
+    dir: prez-ui
+    cmds:
+      - pnpm generate
+    sources:
+      - prez-ui
+    generates:
+      - prez-ui/.output/public
+  dev:up: docker compose -f docker/compose.yml up -d
+  dev:down: docker compose -f docker/compose.yml down
+  dev:restart: docker compose -f docker/compose.yml restart
+  dev:load: |
+    curl http://localhost:3030/anufncat -H 'Content-Type: text/turtle' --data-binary @prez/search_paths.ttl
+  dev:
+    cmds:
+      - task: dev:down
+      - task: dev:up
+      - task: dev:load
+      - python -m webbrowser -t http://localhost:3000/catalogs
+
