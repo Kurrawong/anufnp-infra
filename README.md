@@ -17,7 +17,7 @@ You will need to have the following tools installed:
 - [task](https://taskfile.dev/installation)
 - [pnpm](https://pnpm.io/installation)
 
-You will also need to have a VM created with SSH access enabled.
+You will also need to have a VM created with SSH access enabled and a https domain
 
 ## Usage
 
