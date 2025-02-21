@@ -13,12 +13,6 @@ tasks:
     generates:
       - prez-ui/.output/public
 
-  build:prez-ui-prod:
-    env:
-      NUXT_PUBLIC_PREZ_API_ENDPOINT: https://anufnpvm.australiaeast.cloudapp.azure.com/public/index.html
-    cmds:
-      - task: build:prez-ui
-
   dev:up: docker compose -f docker/compose.yml up -d
   dev:down: docker compose -f docker/compose.yml down
   dev:restart: docker compose -f docker/compose.yml restart
