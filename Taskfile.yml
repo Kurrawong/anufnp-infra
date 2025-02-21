@@ -13,19 +13,6 @@ tasks:
     generates:
       - prez-ui/.output/public
 
-  dev:up: docker compose -f docker/compose.yml up -d
-  dev:down: docker compose -f docker/compose.yml down
-  dev:restart: docker compose -f docker/compose.yml restart
-  dev:load: |
-    curl http://localhost:3030/anufncat -H 'Content-Type: text/turtle' --data-binary @prez/search_paths.ttl
-
-  dev:
-    cmds:
-      - task: dev:down
-      - task: dev:up
-      - task: dev:load
-      - python -m webbrowser -t http://localhost:3000/catalogs
-
   deploy:
     dir: deploy
     cmds:
