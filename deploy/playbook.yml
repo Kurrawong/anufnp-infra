@@ -127,10 +127,10 @@
         owner: 1000
         group: 1000
 
-    - name: copy the assembler description file
+    - name: copy the templated assembler description file
       become: true
-      ansible.builtin.copy:
-        src: ../fuseki/anufncat.ttl
+      ansible.builtin.template:
+        src: config.ttl.j2
         dest: /usr/local/etc/fuseki/config.ttl
         mode: "0600"
         owner: 1000

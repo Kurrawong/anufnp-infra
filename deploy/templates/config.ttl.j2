@@ -15,7 +15,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 :service_tdb_all
     a fuseki:Service ;
-    rdfs:label "TDB2 anufncat" ;
+    rdfs:label "TDB2 {{ fuseki.dataset }}" ;
     fuseki:dataset :geosparql_dataset ;
     fuseki:endpoint
         [
@@ -47,7 +47,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
             fuseki:name "update" ;
             fuseki:operation fuseki:update ;
         ] ;
-    fuseki:name "anufncat" ;
+    fuseki:name "{{ fuseki.dataset }}" ;
 .
 
 :entity_map
@@ -130,7 +130,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     geosparql:indexSizes "-1,-1,-1" ;
     geosparql:inference false ;
     geosparql:queryRewrite true ;
-    geosparql:spatialIndexFile "/fuseki/databases/anufncat/spatial.index" ;
+    geosparql:spatialIndexFile "/fuseki/databases/{{ fuseki.dataset }}/spatial.index" ;
 .
 
 :index_lucene
@@ -139,7 +139,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         [
             a text:StandardAnalyzer ;
         ] ;
-    text:directory "/fuseki/databases/anufncat" ;
+    text:directory "/fuseki/databases/{{ fuseki.dataset }}" ;
     text:entityMap :entity_map ;
     text:propLists (
         
@@ -166,7 +166,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 
 :tdb_dataset_readwrite
     a tdb2:DatasetTDB2 ;
-    tdb2:location "/fuseki/databases/anufncat" ;
+    tdb2:location "/fuseki/databases/{{ fuseki.dataset }}" ;
     tdb2:unionDefaultGraph true ;
 .
 
