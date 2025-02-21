@@ -23,4 +23,7 @@ tasks:
       - task: dev:up
       - task: dev:load
       - python -m webbrowser -t http://localhost:3000/catalogs
-
+  deploy:
+    dir: deploy
+    cmds:
+      - uv run ansible-playbook playbook.yml

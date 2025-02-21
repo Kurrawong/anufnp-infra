@@ -1,0 +1,172 @@
+# https://docs.ansible.com/ansible/latest/collections/all_plugins.html
+# --------------------------------------------------------
+- name: check connection
+  hosts: vms
+  vars_files:
+   - vars.yml
+  remote_user: "{{ vm.username }}"
+  tasks:
+    - name: ping hosts
+      ansible.builtin.ping:
+
+# --------------------------------------------------------
+- name: Install dependencies
+  hosts: vms
+  vars_files:
+    - vars.yml
+  remote_user: "{{ vm.username }}"
+  tasks:
+    - name: install podman, nginx, and snapd
+      become: true
+      ansible.builtin.apt:
+        update-cache: true
+        name:
+          - podman
+          - nginx
+          - snapd
+          - cron
+
+    - name: install certbot
+      become: true
+      community.general.snap:
+        name:
+          - core
+          - certbot
+        classic: true
+
+# --------------------------------------------------------
+- name: Configure and start nginx
+  hosts: vms
+  vars_files:
+    - vars.yml
+  remote_user: "{{ vm.username }}"
+  tasks:
+  - name: copy templated http.conf
+    become: true
+    ansible.builtin.template:
+      src: http.conf.j2
+      dest: /etc/nginx/conf.d/http.conf
+      owner: root
+      mode: "0644"
+
+  - name: enable and start nginx
+    become: true
+    systemd:
+      name: nginx
+      state: restarted
+      enabled: true
+
+
+# --------------------------------------------------------
+- name: Configure Certbot
+  hosts: vms
+  remote_user: "{{ vm.username }}"
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+    - name: create symlink for certbot
+      become: true
+      ansible.builtin.file:
+        src: /snap/bin/certbot
+        dest: /usr/bin/certbot
+        state: link
+
+    - name: letsencrypt with certbot
+      become: true
+      shell: "certbot --nginx -n --agree-tos --email {{ letsencrypt.email }} --expand -d {{ vm.domain }}"
+
+    - name: set up letsencrypt cron job
+      become: true
+      lineinfile:
+        name: /etc/crontab
+        # Renew at 5 pm UTC, which is 3 am Brisbane/Australia time.
+        line: 0 17 * * * root python3 -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew -q
+        state: present
+
+
+# --------------------------------------------------------
+- name: Install and configure Fuseki
+  hosts: vms
+  vars_files:
+    - vars.yml
+    - vault.yml
+  remote_user: "{{ vm.username }}"
+  tasks:
+    - name: create directory /fuseki-data
+      become: true
+      ansible.builtin.file:
+        path: /fuseki-data
+        state: directory
+        mode: "0755"
+        owner: "{{ vm.username }}"
+        group: "{{ vm.username }}"
+
+    - name: create directory /usr/local/etc/fuseki
+      become: true
+      ansible.builtin.file:
+        path: /usr/local/etc/fuseki
+        state: directory
+        mode: "0755"
+
+    - name: copy the templated shiro.ini file to target
+      become: true
+      ansible.builtin.template:
+        src: shiro.ini.j2
+        dest: /usr/local/etc/fuseki/shiro.ini
+        mode: "0600"
+        owner: 1000
+        group: 1000
+
+    - name: copy the assembler description file
+      become: true
+      ansible.builtin.copy:
+        src: ../fuseki/anufncat.ttl
+        dest: /usr/local/etc/fuseki/config.ttl
+        mode: "0600"
+        owner: 1000
+        group: 1000
+
+    - name: populate service facts
+      service_facts:
+
+    - name: stop fuseki
+      become: true
+      ansible.builtin.systemd:
+        name: fuseki
+        state: stopped
+        daemon_reload: true
+      when: "'fuseki.service' in services"
+
+    - name: create systemd unit file for fuseki service
+      become: true
+      containers.podman.podman_container:
+        name: fuseki
+        image: "{{ images.fuseki }}"
+        state: present
+        recreate: true
+        volume:
+          - /fuseki-data:/fuseki
+          - /usr/local/etc/fuseki/config.ttl:/fuseki/config.ttl
+          - /usr/local/etc/fuseki/shiro.ini:/opt/fuseki/shiro.ini
+        ports:
+          - 3030:3030
+        generate_systemd:
+          path: /etc/systemd/system/
+          restart_policy: always
+          new: true
+
+    - name: enable fuseki service
+      become: true
+      systemd:
+        name: container-fuseki
+        enabled: true
+        daemon_reload: true
+
+    - name: start fuseki
+      become: true
+      systemd:
+        name: container-fuseki
+        state: started
+        daemon_reload: true
+

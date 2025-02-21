@@ -1,0 +1,13 @@
+images:
+  fuseki: ghcr.io/kurrawong/fuseki-geosparql:latest
+  prez: ghcr.io/rdflib/prez:latest
+  nginx: docker.io/nginx:alpine
+
+vm:
+  domain: anufnpvm.australiaeast.cloudapp.azure.com
+  username: azureuser
+
+nginx:
+  subpath:
+    fuseki: /fuseki
+    prez: /api

@@ -1,0 +1,9 @@
+[project]
+name = "anufnp-infra"
+version = "0.1.0"
+description = "Infrastructure configuration for the anufnp catalog"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ansible>=11.2.0",
+]

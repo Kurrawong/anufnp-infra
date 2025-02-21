@@ -2,3 +2,4 @@ data/
 .task/
 .vscode/
 .idea/
+deploy/ansiblepass
