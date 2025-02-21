@@ -21,15 +21,27 @@ You will also need to have a VM created with SSH access enabled.
 
 ## Usage
 
-Build the Prez-UI static files
+Build the Prez-UI static files for the prez-ui custom theme
+
+> [!NOTE]  
+> `https://your-vm-domain/api` must be the endpoint where the Prez API will be accessible.
+> by default this will be the root domain of the VM + /api
 
 ```bash
-echo 'NUXT_PUBLIC_PREZ_API_ENDPOINT=https://your-domain/api' > prez-ui/.env
+echo 'NUXT_PUBLIC_PREZ_API_ENDPOINT=https://your-vm-domain/api' > prez-ui/.env
 task build:prez-ui
 ```
 
-Set variables for Ansible by editing the [vars.yml](./deploy/vars.yml) and 
-[hosts.yml](./deploy/hosts.yml) files.
+Set variables for Ansible by editing the [vars.yml](./deploy/vars.yml) file.
+
+> [!NOTE]  
+> you should only need to change the vm.domain and vm.username variables.
+> Other variables can be changed, but should be left as default.
+
+and the [hosts.yml](./deploy/hosts.yml) file.
+
+> [!NOTE]  
+> you need to update the vm host domain and provide the path to your SSH Private key.
 
 and add secret variables to the vault:
 
@@ -38,7 +50,7 @@ echo 'your-vault-password' > deploy/ansiblepass
 uv run ansible-vault create deploy/vault.yml --vault-password-file deploy/ansiblepass
 ```
 
-required vault structure is:
+The required vault structure is:
 
 ```yaml
 fuseki:
