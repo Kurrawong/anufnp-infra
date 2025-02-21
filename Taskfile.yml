@@ -12,17 +12,26 @@ tasks:
       - prez-ui
     generates:
       - prez-ui/.output/public
+
+  build:prez-ui-prod:
+    env:
+      NUXT_PUBLIC_PREZ_API_ENDPOINT: https://anufnpvm.australiaeast.cloudapp.azure.com/public/index.html
+    cmds:
+      - task: build:prez-ui
+
   dev:up: docker compose -f docker/compose.yml up -d
   dev:down: docker compose -f docker/compose.yml down
   dev:restart: docker compose -f docker/compose.yml restart
   dev:load: |
     curl http://localhost:3030/anufncat -H 'Content-Type: text/turtle' --data-binary @prez/search_paths.ttl
+
   dev:
     cmds:
       - task: dev:down
       - task: dev:up
       - task: dev:load
       - python -m webbrowser -t http://localhost:3000/catalogs
+
   deploy:
     dir: deploy
     cmds:

@@ -4,7 +4,7 @@ server {
     # PREZ-UI
 	# ---------------------------------------------------------------
 	location / {
-		root /app;
+		root /usr/local/etc/prez-ui/public;
 		index index.html;
 		try_files $uri $uri/ $uri.html /index.html;
 	}

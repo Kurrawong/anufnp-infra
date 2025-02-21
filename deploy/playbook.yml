@@ -3,7 +3,7 @@
 - name: check connection
   hosts: vms
   vars_files:
-   - vars.yml
+    - vars.yml
   remote_user: "{{ vm.username }}"
   tasks:
     - name: ping hosts
@@ -41,21 +41,20 @@
     - vars.yml
   remote_user: "{{ vm.username }}"
   tasks:
-  - name: copy templated http.conf
-    become: true
-    ansible.builtin.template:
-      src: http.conf.j2
-      dest: /etc/nginx/conf.d/http.conf
-      owner: root
-      mode: "0644"
+    - name: copy templated http.conf
+      become: true
+      ansible.builtin.template:
+        src: http.conf.j2
+        dest: /etc/nginx/conf.d/http.conf
+        owner: root
+        mode: "0644"
 
-  - name: enable and start nginx
-    become: true
-    systemd:
-      name: nginx
-      state: restarted
-      enabled: true
-
+    - name: enable and start nginx
+      become: true
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: true
 
 # --------------------------------------------------------
 - name: Configure Certbot
@@ -84,9 +83,19 @@
         line: 0 17 * * * root python3 -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew -q
         state: present
 
+# --------------------------------------------------------
+- name: Create podman network
+  hosts: vms
+  vars_files: vars.yml
+  remote_user: "{{ vm.username }}"
+  tasks:
+    - name: create podman network
+      become: true
+      containers.podman.podman_network:
+        name: prez
 
 # --------------------------------------------------------
-- name: Install and configure Fuseki
+- name: Configure and start the Fuseki service
   hosts: vms
   vars_files:
     - vars.yml
@@ -133,10 +142,10 @@
     - name: stop fuseki
       become: true
       ansible.builtin.systemd:
-        name: fuseki
+        name: container-fuseki
         state: stopped
         daemon_reload: true
-      when: "'fuseki.service' in services"
+      when: "'container-fuseki.service' in services"
 
     - name: create systemd unit file for fuseki service
       become: true
@@ -151,6 +160,8 @@
           - /usr/local/etc/fuseki/shiro.ini:/opt/fuseki/shiro.ini
         ports:
           - 3030:3030
+        network: prez
+        rm: true
         generate_systemd:
           path: /etc/systemd/system/
           restart_policy: always
@@ -170,3 +181,89 @@
         state: started
         daemon_reload: true
 
+# --------------------------------------------------------
+- name: Configure and start the Prez service
+  hosts: vms
+  remote_user: "{{ vm.username }}"
+  vars_files:
+    - vars.yml
+    - vault.yml
+  tasks:
+    - name: create directory /usr/local/etc/prez
+      become: true
+      ansible.builtin.file:
+        path: /usr/local/etc/prez
+        state: directory
+        mode: "0755"
+
+    - name: copy the templated env file to /usr/local/etc/prez
+      become: true
+      ansible.builtin.template:
+        src: prez.env.j2
+        dest: /usr/local/etc/prez/.env
+        mode: "0600"
+        owner: 1000
+        group: 1000
+
+    - name: populate service facts
+      service_facts:
+
+    - name: stop prez
+      become: true
+      ansible.builtin.systemd:
+        name: container-prez
+        state: stopped
+        daemon_reload: true
+      when: "'container-prez.service' in services"
+
+    - name: create systemd unit file for prez service
+      become: true
+      containers.podman.podman_container:
+        name: prez
+        image: "{{ images.prez }}"
+        state: present
+        recreate: true
+        ports:
+          - 8000:8000
+        env_file:
+          - /usr/local/etc/prez/.env
+        network: prez
+        rm: true
+        generate_systemd:
+          path: /etc/systemd/system/
+          restart_policy: always
+          new: true
+
+    - name: enable prez service
+      become: true
+      systemd:
+        name: container-prez
+        enabled: true
+        daemon_reload: true
+
+    - name: start prez
+      become: true
+      systemd:
+        name: container-prez
+        state: started
+        daemon_reload: true
+
+# --------------------------------------------------------
+- name: Copy Prez-ui static files
+  hosts: vms
+  remote_user: "{{ vm.username }}"
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: create directory /usr/local/etc/prez-ui
+      become: true
+      ansible.builtin.file:
+        path: /usr/local/etc/prez-ui
+        state: directory
+        mode: "0755"
+
+    - name: copy prez-ui static files to /usr/local/etc/prez-ui
+      become: true
+      ansible.builtin.copy:
+        src: ../prez-ui/.output/public  # important that there is no trailing slash https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html#parameter-src
+        dest: /usr/local/etc/prez-ui
