@@ -19,6 +19,27 @@ You will need to have the following tools installed:
 
 You will also need to have a VM created with SSH access enabled and a https domain
 
+## Overview
+
+The Provided Virtual machine will have the following configuration after running the
+code in this repository.
+
+```mermaid
+C4Component
+System_Ext(browser, "Browser") 
+Container_Boundary(vm, "Virtual Machine") {
+    Component(nginx, "nginx")
+    Component(prezui, "Prez UI")
+    Component(prez, "Prez API")
+    Component(fuseki, "Fuseki Server")
+}
+Rel(browser, nginx, "HTTPS")
+Rel(nginx, prezui, "/")
+Rel(nginx, prez, "/api")
+Rel(nginx, fuseki, "/fuseki")
+UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
+```
+
 ## Usage
 
 Build the Prez-UI static files for the prez-ui custom theme
