@@ -26,12 +26,12 @@ code in this repository.
 
 ```mermaid
 C4Component
-System_Ext(browser, "Browser") 
+System_Ext(browser, "Browser")
 Container_Boundary(vm, "Virtual Machine") {
     Component(nginx, "nginx")
-    Component(prezui, "Prez UI")
-    Component(prez, "Prez API")
-    Component(fuseki, "Fuseki Server")
+    Component(prezui, "Prez UI", "static files")
+    Component(prez, "Prez API", "docker container")
+    Component(fuseki, "Fuseki Server", "docker container")
 }
 Rel(browser, nginx, "HTTPS")
 Rel(nginx, prezui, "/")
@@ -40,9 +40,15 @@ Rel(nginx, fuseki, "/fuseki")
 UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
 
+- Fuseki and Prez are docker containers executed by Podman, managed by systemd,
+- Prez-UI static files are served by nginx,
+- nginx is installed on the host and runs as a systemd service,
+- certbot is used to generate a letsencrypt signed SSL certificate for the given domain,
+- a cron job is created for certbot to automatically renew the SSL certificate.
+
 ## Usage
 
-Build the Prez-UI static files for the prez-ui custom theme
+First off, you need to build the Prez-UI static files for the prez-ui custom theme
 
 > [!NOTE]  
 > `https://your-vm-domain/api` must be the endpoint where the Prez API will be accessible.
