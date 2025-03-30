@@ -5,9 +5,8 @@
 @layer base {
     :root {
         /* define your Tailwind CSS variables (in HSL values without the hsl()) here */
-		--primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
-		--secondary: 37 63.2% 45.9%;
-    --link: 0 0% 0%;
+      --primary: 0 0% 0%;
+      --secondary: 37 63.2% 45.9%;
+      --link: 0 0% 0%;
     }
 }
