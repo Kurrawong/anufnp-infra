@@ -59,13 +59,13 @@ echo 'NUXT_PUBLIC_PREZ_API_ENDPOINT=https://your-vm-domain/api' > prez-ui/.env
 task build:prez-ui
 ```
 
-Set variables for Ansible by editing the [vars.yml](./deploy/vars.yml) file.
+Set variables for Ansible by editing the [vars.yaml](./deploy/vars.yaml) file.
 
 > [!NOTE]  
 > you should only need to change the vm.domain and vm.username variables.
 > Other variables can be changed, but should be left as default.
 
-and the [hosts.yml](./deploy/hosts.yml) file.
+and the [hosts.yaml](./deploy/hosts.yaml) file.
 
 > [!NOTE]  
 > you need to update the vm host domain and provide the path to your SSH Private key.
@@ -74,7 +74,7 @@ and add secret variables to the vault:
 
 ```bash
 echo 'your-vault-password' > deploy/ansiblepass
-uv run ansible-vault create deploy/vault.yml --vault-password-file deploy/ansiblepass
+uv run ansible-vault create deploy/vault.yaml --vault-password-file deploy/ansiblepass
 ```
 
 The required vault structure is:

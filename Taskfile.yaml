@@ -16,4 +16,4 @@ tasks:
   deploy:
     dir: deploy
     cmds:
-      - uv run ansible-playbook playbook.yml
+      - uv run ansible-playbook playbook.yaml

@@ -3,7 +3,7 @@
 - name: check connection
   hosts: vms
   vars_files:
-    - vars.yml
+    - vars.yaml
   remote_user: "{{ vm.username }}"
   tasks:
     - name: ping hosts
@@ -13,7 +13,7 @@
 - name: Install dependencies
   hosts: vms
   vars_files:
-    - vars.yml
+    - vars.yaml
   remote_user: "{{ vm.username }}"
   tasks:
     - name: install podman, nginx, and snapd
@@ -38,7 +38,7 @@
 - name: Configure and start nginx
   hosts: vms
   vars_files:
-    - vars.yml
+    - vars.yaml
   remote_user: "{{ vm.username }}"
   tasks:
     - name: copy templated http.conf
@@ -61,8 +61,8 @@
   hosts: vms
   remote_user: "{{ vm.username }}"
   vars_files:
-    - vars.yml
-    - vault.yml
+    - vars.yaml
+    - vault.yaml
   tasks:
     - name: create symlink for certbot
       become: true
@@ -86,7 +86,7 @@
 # --------------------------------------------------------
 - name: Create podman network
   hosts: vms
-  vars_files: vars.yml
+  vars_files: vars.yaml
   remote_user: "{{ vm.username }}"
   tasks:
     - name: create podman network
@@ -98,8 +98,8 @@
 - name: Configure and start the Fuseki service
   hosts: vms
   vars_files:
-    - vars.yml
-    - vault.yml
+    - vars.yaml
+    - vault.yaml
   remote_user: "{{ vm.username }}"
   tasks:
     - name: create directory /fuseki-data
@@ -186,8 +186,8 @@
   hosts: vms
   remote_user: "{{ vm.username }}"
   vars_files:
-    - vars.yml
-    - vault.yml
+    - vars.yaml
+    - vault.yaml
   tasks:
     - name: create directory /usr/local/etc/prez
       become: true
@@ -253,7 +253,7 @@
   hosts: vms
   remote_user: "{{ vm.username }}"
   vars_files:
-    - vars.yml
+    - vars.yaml
   tasks:
     - name: create directory /usr/local/etc/prez-ui
       become: true
