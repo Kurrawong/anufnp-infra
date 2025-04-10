@@ -20,7 +20,7 @@ onMounted(() => {
 <template>  
     <NuxtLayout>
         <template #breadcrumb>
-            <slot name="breadcrumb" class="bg-white">
+            <slot name="breadcrumb">
                 <ItemBreadcrumb :custom-items="[...appConfig.breadcrumbPrepend, {label: 'SPARQL'}]" />
             </slot>
         </template>
@@ -42,4 +42,3 @@ onMounted(() => {
     display: none !important;
 }
 </style>
-

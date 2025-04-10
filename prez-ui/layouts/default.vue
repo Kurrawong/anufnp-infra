@@ -56,7 +56,7 @@ onBeforeMount(() => {
     <!-- Navigation -->
     <div class="bg-white text-secondary border-b relative">
       <nav
-        class="container mx-auto px-4 py-4 hidden md:flex space-x-12 text-lg"
+        class="main-nav container mx-auto px-4 py-4 hidden md:flex space-x-12 text-lg"
       >
         <NuxtLink
           v-for="{ label, url } in menu.filter((item) => item.active !== false)"
