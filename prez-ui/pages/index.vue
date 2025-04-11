@@ -18,7 +18,6 @@
           The data is provided in RDF Format, making it highly interoperable and
           discoverable.
         </p>
-        <a href="/catalogs" >Show me the Catalogs -></a>
       </div>
     </template>
   </NuxtLayout>
