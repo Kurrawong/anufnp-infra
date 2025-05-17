@@ -17,7 +17,7 @@
         <NuxtLink to="/catalogs" class="btn btn-primary px-4 py-2 rounded shadow bg-primary text-white hover:text-black hover:bg-secondary transition">
           Browse the Portal &#8594;
         </NuxtLink>
-        <div id="map" class="h-96 mt-8"></div>
+        <div id="map" class="h-96 mt-8" style="width: 80%;"></div>
       </div>
     </template>
   </NuxtLayout>
