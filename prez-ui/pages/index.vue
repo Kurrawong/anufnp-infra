@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -42,7 +42,7 @@ const getTileSourceUrl = () => {
 };
 
 onMounted(() => {
-  new Map({
+  const map = new Map({
     target: 'map',
     layers: [
       new TileLayer({
@@ -50,11 +50,13 @@ onMounted(() => {
           url: getTileSourceUrl(),
         }),
       }),
+      const vectorSource = new Vector({
+        format: new GeoJSON(),
+        url: 'http://localhost:8000/features/collections/anufncatalogueanueduau:refdata-geoms/items?_mediatype=application%2Fgeo%2Bjson',
+      });
+
       new VectorLayer({
-        source: new Vector({
-          format: new GeoJSON(),
-          url: 'http://localhost:8000/features/collections/anufncatalogueanueduau:refdata-geoms/items?_mediatype=application%2Fgeo%2Bjson',
-        })
+        source: vectorSource,
       })
     ],
     view: new View({
@@ -63,5 +65,17 @@ onMounted(() => {
       projection: 'EPSG:4326',
     }),
   });
-});
+  });
+
+  const updateVectorSourceUrl = () => {
+    const extent = map.getView().calculateExtent(map.getSize());
+    const [minX, minY, maxX, maxY] = extent;
+    const cqlFilter = `BBOX(geometry, ${minX}, ${minY}, ${maxX}, ${maxY})`;
+    vectorSource.setUrl(`http://localhost:8000/features/collections/anufncatalogueanueduau:refdata-geoms/items?_mediatype=application%2Fgeo%2Bjson&cql_filter=${encodeURIComponent(cqlFilter)}`);
+  };
+
+  watch(() => map.getView().getCenter(), updateVectorSourceUrl);
+  watch(() => map.getView().getZoom(), updateVectorSourceUrl);
+
+  updateVectorSourceUrl();
 </script>
