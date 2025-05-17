@@ -5,3 +5,4 @@ data/
 deploy/ansiblepass
 deploy/vault.yml
 anufnp-vm_key.pem
+.aider*

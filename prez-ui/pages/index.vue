@@ -10,16 +10,12 @@
         <p class="mb-4">
           Use this portal to discover Indigenous research data held by the ANU.
         </p>
-        <p class="mb-4">
+        <p class="mb-8">
           The catalogs hosted here expose historical research data from across
           the university.
         </p>
-        <p class="mb-4">
-          The data is provided in RDF Format, making it highly interoperable and
-          discoverable.
-        </p>
-        <NuxtLink to="/catalogs" class="btn btn-primary mt-4 px-4 py-2 rounded shadow hover:bg-blue-600 transition">
-          View the catalogs
+        <NuxtLink to="/catalogs" class="btn btn-primary px-4 py-2 rounded shadow bg-primary text-white hover:text-black hover:bg-secondary transition">
+          Browse the Portal &#8594;
         </NuxtLink>
       </div>
     </template>
