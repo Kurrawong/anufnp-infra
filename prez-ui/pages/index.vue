@@ -18,7 +18,7 @@
           The data is provided in RDF Format, making it highly interoperable and
           discoverable.
         </p>
-        <NuxtLink to="/catalogs" class="btn btn-primary mt-4">
+        <NuxtLink to="/catalogs" class="btn btn-primary mt-4 px-4 py-2 rounded shadow hover:bg-blue-600 transition">
           View the catalogs
         </NuxtLink>
       </div>
