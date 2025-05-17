@@ -69,7 +69,6 @@ const loadFeatures = async (search_term) => {
     ?feature geo:hasGeometry/geo:asWKT ?wkt .
     filter (contains(lcase(?name), "${search_term.toLowerCase()}"))
   }
-  limit 10
   `;
   const url = new URL("http://localhost:8000/sparql");
   url.searchParams.append("query", query);
