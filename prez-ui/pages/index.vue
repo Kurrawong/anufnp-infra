@@ -30,6 +30,14 @@
         />
       </div>
       <div id="map" class="h-96 mt-8 mx-auto pl-20 pr-20"></div>
+      <div>
+        <ul id="resultlist">
+          <li class="mt-4 text-sm text-gray-500 italic">
+            Use the map to search for and select a language group or place name
+            to see resources that mention that place
+          </li>
+        </ul>
+      </div>
     </template>
   </NuxtLayout>
 </template>
@@ -44,6 +52,8 @@ import VectorLayer from "ol/layer/Vector.js";
 import VectorSource from "ol/source/Vector.js";
 import WKT from "ol/format/WKT.js";
 import OSM from "ol/source/OSM";
+import Style from "ol/style/Style.js";
+import Text from "ol/style/Text.js";
 
 const getTileSourceUrl = () => {
   const prefersDarkScheme = window.matchMedia(
@@ -100,6 +110,48 @@ const loadFeatures = async (search_term) => {
 };
 
 onMounted(() => {
+  const resultList = document.getElementById("resultlist");
+  const handleFeatureClick = async (featureId, featureName) => {
+    console.log(featureId);
+    const query = `
+    PREFIX schema: <https://schema.org/>
+    select ?thing (coalesce(?label) as ?name)
+    where {
+      ?thing schema:mentions <${featureId}> .
+      values ?label_prop {
+        schema:name schema:title schema:headline 
+      }
+      ?thing ?label_prop ?label .
+    }`;
+    console.log(query);
+    const url = new URL("http://localhost:8000/sparql");
+    url.searchParams.append("query", query);
+    const headers = new Headers();
+    headers.append("content-type", "application/sparql-query");
+    headers.append("accept", "application/sparql-results+json");
+    try {
+      const response = await fetch(url, { method: "GET", headers: headers });
+      if (!response.ok) {
+        console.log("Error retrieving data");
+      }
+      const data = await response.json();
+      const results = data.results.bindings;
+      resultList.innerHTML = "";
+      if (results.length < 1) {
+        resultList.innerHTML = `<li class="mt-4 text-sm text-gray-500 italic">No results for ${featureName}</li>`;
+      } else {
+        resultList.innerHTML = `<li class="mb-4 mt-4">Resources mentioning <a href="${featureId}" target="_blank">${featureName}</a></li>`;
+      }
+      for (let i = 0; i < results.length; i++) {
+        const result = results[i];
+        let li = document.createElement("li");
+        li.innerHTML = `&#8594; <a href="${window.location}object?uri=${result.thing.value}">${result.name.value}</a>`;
+        resultList.appendChild(li);
+      }
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
   document.getElementById("search").addEventListener("change", (event) => {
     loadFeatures(event.target.value);
   });
@@ -119,5 +171,42 @@ onMounted(() => {
       projection: "EPSG:4326",
     }),
   });
+  // Create a tooltip element
+  const tooltipElement = document.createElement("div");
+  tooltipElement.className =
+    "maptt px-2 py-1 border rounded bg-primary text-white";
+  document.body.appendChild(tooltipElement);
+
+  // Add event listener for pointer move
+  map.on("pointermove", function (evt) {
+    const feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+      return feature;
+    });
+
+    if (feature) {
+      tooltipElement.innerHTML = feature.get("name");
+      tooltipElement.style.display = "block";
+      tooltipElement.style.left = evt.pixel[0] + map.getSize()[0] / 4 + "px";
+      tooltipElement.style.top = evt.pixel[1] + map.getSize()[1] + "px";
+    } else {
+      tooltipElement.style.display = "none";
+    }
+  });
+  // Add click event listener to the map
+  map.on("singleclick", function (event) {
+    map.forEachFeatureAtPixel(event.pixel, function (feature) {
+      const featureId = feature.getId();
+      if (featureId) {
+        handleFeatureClick(featureId, feature.get("name")); // Call the function with the ID
+      }
+    });
+  });
 });
 </script>
+<style>
+.maptt {
+  position: absolute;
+  display: none;
+  pointer-events: none; /* Prevents the tooltip from interfering with mouse events */
+}
+</style>
