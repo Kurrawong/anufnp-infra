@@ -5,9 +5,6 @@
         <h1 class="text-2xl mt-8">
           First Nations Portfolio Indigenous Research Portal
         </h1>
-        <NuxtLink to="/catalogs" class="btn btn-primary mt-4">
-          View the catalogs
-        </NuxtLink>
       </div>
       <div class="text-lg">
         <p class="mb-4">
@@ -21,6 +18,9 @@
           The data is provided in RDF Format, making it highly interoperable and
           discoverable.
         </p>
+        <NuxtLink to="/catalogs" class="btn btn-primary mt-4">
+          View the catalogs
+        </NuxtLink>
       </div>
     </template>
   </NuxtLayout>
