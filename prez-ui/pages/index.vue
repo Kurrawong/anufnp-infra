@@ -17,7 +17,7 @@
         <NuxtLink to="/catalogs" class="btn btn-primary px-4 py-2 rounded shadow bg-primary text-white hover:text-black hover:bg-secondary transition">
           Browse the Portal &#8594;
         </NuxtLink>
-        <div id="map" class="h-96 mt-8 mx-auto" style="width: 80%;"></div>
+        <div id="map" class="h-96 mt-8 mx-auto pl-20 pr-20"></div>
       </div>
     </template>
   </NuxtLayout>
@@ -51,7 +51,7 @@ onMounted(() => {
     ],
     view: new View({
       center: [133, -25], // Centered on Australia
-      zoom: 4,
+      zoom: 3.8,
       projection: 'EPSG:4326',
     }),
   });
