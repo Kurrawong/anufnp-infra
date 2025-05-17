@@ -5,6 +5,11 @@
         <h1 class="text-2xl mt-8">
           First Nations Portfolio Indigenous Research Portal
         </h1>
+        <ul id="sparql-results" class="mt-8">
+          <li v-for="(result, index) in sparqlResults" :key="index">
+            {{ result.s.value }} - {{ result.p.value }} - {{ result.o.value }}
+          </li>
+        </ul>
       </div>
       <div class="text-lg">
         <p class="mb-4">
@@ -24,7 +29,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import 'ol/ol.css';
 import Map from 'ol/Map';
 import View from 'ol/View';
@@ -38,7 +43,32 @@ const getTileSourceUrl = () => {
     : 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 };
 
+const sparqlResults = ref([]);
+
+const fetchSparqlResults = async () => {
+  const query = `
+    SELECT ?s ?p ?o WHERE {
+      ?s ?p ?o
+    } LIMIT 10
+  `;
+  const endpoint = process.env.NUXT_PUBLIC_PREZ_API_ENDPOINT;
+  const url = `${endpoint}?query=${encodeURIComponent(query)}`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/sparql-results+json',
+      },
+    });
+    const data = await response.json();
+    sparqlResults.value = data.results.bindings;
+  } catch (error) {
+    console.error('Error fetching SPARQL results:', error);
+  }
+};
+
 onMounted(() => {
+  fetchSparqlResults();
   new Map({
     target: 'map',
     layers: [
