@@ -145,7 +145,7 @@ onMounted(() => {
       for (let i = 0; i < results.length; i++) {
         const result = results[i];
         let li = document.createElement("li");
-        li.innerHTML = `&#8594; <a href="${window.location}object?uri=${result.thing.value}">${result.name.value}</a>`;
+        li.innerHTML = `&#8594; <a href="${window.location}object?uri=${result.thing.value}" target="_blank">${result.name.value}</a>`;
         resultList.appendChild(li);
       }
     } catch (error) {
