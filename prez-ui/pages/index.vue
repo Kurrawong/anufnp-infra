@@ -17,7 +17,36 @@
         <NuxtLink to="/catalogs" class="btn btn-primary px-4 py-2 rounded shadow bg-primary text-white hover:text-black hover:bg-secondary transition">
           Browse the Portal &#8594;
         </NuxtLink>
+        <div id="map" class="h-96 mt-8"></div>
       </div>
     </template>
   </NuxtLayout>
 </template>
+
+<script setup>
+import { onMounted } from 'vue';
+import 'ol/ol.css';
+import Map from 'ol/Map';
+import View from 'ol/View';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
+
+onMounted(() => {
+  new Map({
+    target: 'map',
+    layers: [
+      new TileLayer({
+        source: new OSM({
+          url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          attributions: '© OpenStreetMap contributors',
+        }),
+      }),
+    ],
+    view: new View({
+      center: [149.0124, -35.4735], // Centered on Australia
+      zoom: 4,
+      projection: 'EPSG:4326',
+    }),
+  });
+});
+</script>
