@@ -31,13 +31,20 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 
+const getTileSourceUrl = () => {
+  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return prefersDarkScheme
+    ? 'https://{a-c}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+    : 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+};
+
 onMounted(() => {
   new Map({
     target: 'map',
     layers: [
       new TileLayer({
         source: new OSM({
-          url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          url: getTileSourceUrl(),
           attributions: '© OpenStreetMap contributors',
         }),
       }),
