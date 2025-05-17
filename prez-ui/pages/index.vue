@@ -43,7 +43,7 @@ onMounted(() => {
       }),
     ],
     view: new View({
-      center: [149.0124, -35.4735], // Centered on Australia
+      center: [133, -25], // Centered on Australia
       zoom: 4,
       projection: 'EPSG:4326',
     }),
