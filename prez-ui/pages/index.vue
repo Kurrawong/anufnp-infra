@@ -35,7 +35,7 @@
         <ul>
           <li class="mt-4 text-sm text-gray-500 italic">
             Use the map to search for and select a language group or place name
-            to see resources that mention that place
+            to see resources that mention it
           </li>
         </ul>
       </div>
