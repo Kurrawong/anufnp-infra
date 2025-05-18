@@ -56,6 +56,8 @@ import OSM from "ol/source/OSM";
 import Style from "ol/style/Style.js";
 import Text from "ol/style/Text.js";
 
+const runtimeConfig = useRuntimeConfig();
+
 const getTileSourceUrl = () => {
   const prefersDarkScheme = window.matchMedia(
     "(prefers-color-scheme: dark)",
@@ -85,7 +87,7 @@ const loadFeatures = async (search_term) => {
     filter (contains(lcase(?name), "${search_term.toLowerCase()}"))
   }
   `;
-  const url = new URL("http://localhost:8000/sparql");
+  const url = new URL(`${runtimeConfig.public.prezApiEndpoint}/sparql`);
   url.searchParams.append("query", query);
   const headers = new Headers();
   headers.append("content-type", "application/sparql-query");
@@ -135,7 +137,7 @@ onMounted(() => {
       }
       ?thing ?label_prop ?label .
     }`;
-    const url = new URL("http://localhost:8000/sparql");
+    const url = new URL(`${runtimeConfig.public.prezApiEndpoint}/sparql`);
     url.searchParams.append("query", query);
     const headers = new Headers();
     headers.append("content-type", "application/sparql-query");
