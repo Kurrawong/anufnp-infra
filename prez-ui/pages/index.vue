@@ -5,6 +5,7 @@
         <h1 class="text-2xl mt-8">
           First Nations Portfolio Indigenous Research Portal
         </h1>
+        <div v-if="loading" class="spinner mt-4"></div>
       </div>
       <div class="text-lg">
         <p class="mb-4">
@@ -55,7 +56,7 @@ import OSM from "ol/source/OSM";
 import Style from "ol/style/Style.js";
 import Text from "ol/style/Text.js";
 
-const getTileSourceUrl = () => {
+const loading = ref(false);
   const prefersDarkScheme = window.matchMedia(
     "(prefers-color-scheme: dark)",
   ).matches;
@@ -68,6 +69,7 @@ const vectorSource = new VectorSource();
 const vectorLayer = new VectorLayer({ source: vectorSource });
 
 const loadFeatures = async (search_term) => {
+  loading.value = true;
   const query = `
   PREFIX geo: <http://www.opengis.net/ont/geosparql#>
   PREFIX schemas: <https://schema.org/>
@@ -104,7 +106,9 @@ const loadFeatures = async (search_term) => {
       feature.set("name", result.name.value);
       vectorSource.addFeature(feature);
     }
+    loading.value = false;
   } catch (error) {
+    loading.value = false;
     console.error("There was a problem with the fetch operation:", error);
   }
 };
@@ -154,6 +158,7 @@ onMounted(() => {
   };
   document.getElementById("search").addEventListener("change", (event) => {
     loadFeatures(event.target.value);
+    loading.value = false;
   });
   const map = new Map({
     target: "map",
@@ -209,4 +214,21 @@ onMounted(() => {
   display: none;
   pointer-events: none; /* Prevents the tooltip from interfering with mouse events */
 }
-</style>
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
