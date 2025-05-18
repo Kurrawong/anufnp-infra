@@ -18,7 +18,7 @@
           to="/catalogs"
           class="btn btn-primary px-4 py-2 rounded shadow bg-primary text-white hover:text-black hover:bg-secondary transition"
         >
-          Browse the Portal &#8594;
+          Browse the Catalogs &#8594;
         </NuxtLink>
       </div>
       <div class="text-lg mt-4 mb-4">
@@ -26,7 +26,7 @@
           id="search"
           class="px-4 py-2 rounded mr-8"
           type="text"
-          placeholder="search place/language"
+          placeholder="Search by place/language"
         />
         <span id="spinner" class="spinner"></span>
       </div>
