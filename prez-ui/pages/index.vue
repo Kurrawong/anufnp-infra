@@ -214,7 +214,6 @@ onMounted(() => {
   display: none;
   pointer-events: none; /* Prevents the tooltip from interfering with mouse events */
 }
-</style>
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   width: 36px;
@@ -233,3 +232,4 @@ onMounted(() => {
     transform: rotate(360deg);
   }
 }
+</style>
