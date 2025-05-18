@@ -31,8 +31,8 @@
         <span id="spinner" class="spinner"></span>
       </div>
       <div id="map" class="h-96 mt-8 mx-auto pl-20 pr-20"></div>
-      <div>
-        <ul id="resultlist">
+      <div id="resultlist">
+        <ul>
           <li class="mt-4 text-sm text-gray-500 italic">
             Use the map to search for and select a language group or place name
             to see resources that mention that place
@@ -121,7 +121,10 @@ onMounted(() => {
   spinner.style.display = "none";
   const resultList = document.getElementById("resultlist");
   const handleFeatureClick = async (featureId, featureName) => {
-    console.log(featureId);
+    let ul = document.createElement("ul");
+    let liheader = document.createElement("li");
+    liheader.innerHTML = `<li class="mb-4 mt-4">Resources mentioning <a href="${featureId}" target="_blank">${featureName}</a></li>`;
+    ul.appendChild(liheader);
     const query = `
     PREFIX schema: <https://schema.org/>
     select ?thing (coalesce(?label) as ?name)
@@ -132,7 +135,6 @@ onMounted(() => {
       }
       ?thing ?label_prop ?label .
     }`;
-    console.log(query);
     const url = new URL("http://localhost:8000/sparql");
     url.searchParams.append("query", query);
     const headers = new Headers();
@@ -145,17 +147,18 @@ onMounted(() => {
       }
       const data = await response.json();
       const results = data.results.bindings;
-      resultList.innerHTML = "";
       if (results.length < 1) {
-        resultList.innerHTML = `<li class="mt-4 text-sm text-gray-500 italic">No results for ${featureName}</li>`;
-      } else {
-        resultList.innerHTML = `<li class="mb-4 mt-4">Resources mentioning <a href="${featureId}" target="_blank">${featureName}</a></li>`;
+        let li = document.createElement("li");
+        li.innerHTML = `<li class="mt-4 text-sm text-gray-500 italic">No results for ${featureName}</li>`;
+        ul.appendChild(li);
+        resultList.appendChild(ul);
       }
       for (let i = 0; i < results.length; i++) {
         const result = results[i];
         let li = document.createElement("li");
         li.innerHTML = `&#8594; <a href="${window.location}object?uri=${result.thing.value}" target="_blank">${result.name.value}</a>`;
-        resultList.appendChild(li);
+        ul.appendChild(li);
+        resultList.appendChild(ul);
       }
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
@@ -203,10 +206,12 @@ onMounted(() => {
   });
   // Add click event listener to the map
   map.on("singleclick", function (event) {
+    resultList.innerHTML = "";
     map.forEachFeatureAtPixel(event.pixel, function (feature) {
       const featureId = feature.getId();
+      const featureName = feature.get("name");
       if (featureId) {
-        handleFeatureClick(featureId, feature.get("name")); // Call the function with the ID
+        handleFeatureClick(featureId, featureName); // Call the function with the ID
       }
     });
   });
