@@ -208,7 +208,10 @@ onMounted(() => {
   });
   // Add click event listener to the map
   map.on("singleclick", function (event) {
+    const spinner = document.createElement("div");
+    spinner.className = "spinner";
     resultList.innerHTML = "";
+    resultList.appendChild(spinner);
     map.forEachFeatureAtPixel(event.pixel, function (feature) {
       const featureId = feature.getId();
       const featureName = feature.get("name");
@@ -216,6 +219,7 @@ onMounted(() => {
         handleFeatureClick(featureId, featureName); // Call the function with the ID
       }
     });
+    resultList.removeChild(spinner);
   });
 });
 </script>
