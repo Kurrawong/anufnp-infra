@@ -24,7 +24,7 @@
       <div class="text-lg mt-4 mb-4">
         <input
           id="search"
-          class="px-4 py-2 rounded mr-8"
+          class="px-4 py-1 rounded mr-8 border"
           type="text"
           placeholder="Search by place/language"
         />
