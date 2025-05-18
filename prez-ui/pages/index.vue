@@ -69,6 +69,9 @@ const vectorSource = new VectorSource();
 const vectorLayer = new VectorLayer({ source: vectorSource });
 
 const loadFeatures = async (search_term) => {
+  if (search_term.length < 1) {
+    return;
+  }
   spinner.style.display = "inline-block";
   const query = `
   PREFIX geo: <http://www.opengis.net/ont/geosparql#>
