@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted } from "vue";
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
@@ -53,8 +53,6 @@ import VectorLayer from "ol/layer/Vector.js";
 import VectorSource from "ol/source/Vector.js";
 import WKT from "ol/format/WKT.js";
 import OSM from "ol/source/OSM";
-import Style from "ol/style/Style.js";
-import Text from "ol/style/Text.js";
 
 const runtimeConfig = useRuntimeConfig();
 
