@@ -5,7 +5,6 @@
         <h1 class="text-2xl mt-8">
           First Nations Portfolio Indigenous Research Portal
         </h1>
-        <div v-if="loading" class="spinner mt-4"></div>
       </div>
       <div class="text-lg">
         <p class="mb-4">
@@ -25,10 +24,11 @@
       <div class="text-lg mt-4 mb-4">
         <input
           id="search"
-          class="px-4 py-2 rounded"
+          class="px-4 py-2 rounded mr-8"
           type="text"
           placeholder="search place/language"
         />
+        <span id="spinner" class="spinner"></span>
       </div>
       <div id="map" class="h-96 mt-8 mx-auto pl-20 pr-20"></div>
       <div>
@@ -56,7 +56,7 @@ import OSM from "ol/source/OSM";
 import Style from "ol/style/Style.js";
 import Text from "ol/style/Text.js";
 
-const loading = ref(false);
+const getTileSourceUrl = () => {
   const prefersDarkScheme = window.matchMedia(
     "(prefers-color-scheme: dark)",
   ).matches;
@@ -69,7 +69,7 @@ const vectorSource = new VectorSource();
 const vectorLayer = new VectorLayer({ source: vectorSource });
 
 const loadFeatures = async (search_term) => {
-  loading.value = true;
+  spinner.style.display = "inline-block";
   const query = `
   PREFIX geo: <http://www.opengis.net/ont/geosparql#>
   PREFIX schemas: <https://schema.org/>
@@ -106,14 +106,16 @@ const loadFeatures = async (search_term) => {
       feature.set("name", result.name.value);
       vectorSource.addFeature(feature);
     }
-    loading.value = false;
+    spinner.style.display = "none";
   } catch (error) {
-    loading.value = false;
+    spinner.style.display = "none";
     console.error("There was a problem with the fetch operation:", error);
   }
 };
 
 onMounted(() => {
+  const spinner = document.getElementById("spinner");
+  spinner.style.display = "none";
   const resultList = document.getElementById("resultlist");
   const handleFeatureClick = async (featureId, featureName) => {
     console.log(featureId);
@@ -158,7 +160,6 @@ onMounted(() => {
   };
   document.getElementById("search").addEventListener("change", (event) => {
     loadFeatures(event.target.value);
-    loading.value = false;
   });
   const map = new Map({
     target: "map",
@@ -216,10 +217,10 @@ onMounted(() => {
 }
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
-  width: 36px;
-  height: 36px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  border-left-color: #09f;
+  border-left-color: var(--bg-secondary);
   animation: spin 1s ease infinite;
   margin: 0 auto;
 }
