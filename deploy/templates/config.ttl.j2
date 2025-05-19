@@ -82,6 +82,11 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
             text:field "name" ;
             text:predicate schema:name ;
         ]
+
+        [
+            text:field "schema title" ;
+            text:predicate schema:title ;
+        ]
         
         [
             text:field "shortTitle" ;
@@ -146,6 +151,7 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         [
             text:propListProp ex:searchFields ;
             text:props (
+                schema:title
                 schema:headline
                 schema:name
                 bibo:shortTitle
