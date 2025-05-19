@@ -4,7 +4,7 @@ vm:
 
 images:
   fuseki: ghcr.io/kurrawong/fuseki-geosparql:git-main-e642d849
-  prez: ghcr.io/rdflib/prez:4.7.3
+  prez: ghcr.io/rdflib/prez:4.8.2
   nginx: docker.io/nginx:alpine
 
 nginx:
