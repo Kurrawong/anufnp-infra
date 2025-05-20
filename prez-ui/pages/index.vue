@@ -34,8 +34,8 @@
         <div id="resultlist" class="w-1/4 h-96 overflow-y-auto pr-4">
           <ul>
             <li class="mt-4 text-sm text-gray-500 italic">
-              Use the map to search for and select a language group or place name
-              to see resources that mention it
+              Use the map to search for and select a language group or place
+              name to see resources that mention it
             </li>
           </ul>
         </div>
@@ -189,6 +189,9 @@ onMounted(() => {
   const tooltipElement = document.createElement("div");
   tooltipElement.className =
     "maptt px-2 py-1 border rounded bg-primary text-white";
+  tooltipElement.style.display = "none";
+  tooltipElement.style.position = "absolute";
+  tooltipElement.style.pointerEvents = "none";
   document.body.appendChild(tooltipElement);
 
   // Add event listener for pointer move
@@ -200,35 +203,29 @@ onMounted(() => {
     if (feature) {
       tooltipElement.innerHTML = feature.get("name");
       tooltipElement.style.display = "block";
-      tooltipElement.style.left = evt.pixel[0] + map.getSize()[0] / 4 + "px";
-      tooltipElement.style.top = evt.pixel[1] + map.getSize()[1] + "px";
+      const mapRect = map.getTargetElement().getBoundingClientRect();
+      tooltipElement.style.left =
+        mapRect.left + evt.pixel[0] + window.scrollX - 30 + "px";
+      tooltipElement.style.top =
+        mapRect.top + evt.pixel[1] + window.scrollY - 50 + "px";
     } else {
       tooltipElement.style.display = "none";
     }
   });
   // Add click event listener to the map
   map.on("singleclick", function (event) {
-    const spinner = document.createElement("div");
-    spinner.className = "spinner";
     resultList.innerHTML = "";
-    resultList.appendChild(spinner);
     map.forEachFeatureAtPixel(event.pixel, function (feature) {
       const featureId = feature.getId();
       const featureName = feature.get("name");
       if (featureId) {
-        handleFeatureClick(featureId, featureName); // Call the function with the ID
+        handleFeatureClick(featureId, featureName);
       }
     });
-    resultList.removeChild(spinner);
   });
 });
 </script>
 <style scoped>
-.maptt {
-  position: absolute;
-  display: none;
-  pointer-events: none; /* Prevents the tooltip from interfering with mouse events */
-}
 .spinner {
   border: 4px solid rgba(0, 0, 0, 0.1);
   width: 24px;
