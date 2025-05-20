@@ -30,14 +30,16 @@
         />
         <span id="spinner" class="spinner"></span>
       </div>
-      <div id="map" class="h-96 mt-8 mx-auto pl-20 pr-20"></div>
-      <div id="resultlist">
-        <ul>
-          <li class="mt-4 text-sm text-gray-500 italic">
-            Use the map to search for and select a language group or place name
-            to see resources that mention it
-          </li>
-        </ul>
+      <div class="flex mt-8">
+        <div id="resultlist" class="w-1/4 h-96 overflow-y-auto pr-4">
+          <ul>
+            <li class="mt-4 text-sm text-gray-500 italic">
+              Use the map to search for and select a language group or place name
+              to see resources that mention it
+            </li>
+          </ul>
+        </div>
+        <div id="map" class="h-96 w-3/4"></div>
       </div>
     </template>
   </NuxtLayout>
@@ -221,7 +223,7 @@ onMounted(() => {
   });
 });
 </script>
-<style>
+<style scoped>
 .maptt {
   position: absolute;
   display: none;
